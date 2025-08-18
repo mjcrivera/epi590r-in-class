@@ -1,3 +1,4 @@
+install.packages("gtsummary", dependencies = TRUE)
 library(tidyverse)
 library(gtsummary)
 
@@ -19,8 +20,6 @@ nlsy <- read_csv(here::here("data", "raw", "nlsy.csv"),
     glasses_cat = factor(glasses, labels = c("No", "Yes"))
   )
 
-
-# simple table
 tbl_summary(
   nlsy,
   by = sex_cat,
@@ -29,6 +28,25 @@ tbl_summary(
     eyesight_cat, glasses, age_bir
   )
 )
+## Make a tbl_summary(). Include categorical region, race/ethnicity, income, and the sleep variables (use a helper function to select those) and make sure they are nicely labeled.
+# simple table. ##
+# Exercise 3 #
+tbl_summary(
+	nlsy,
+	include = c(
+		starts_with("sleep"),
+		race_eth_cat, region_cat, income
+	),
+label = list(
+	race_eth_cat ~ "Race/ethnicity",
+	region_cat ~ "Region",
+	income ~ "Income",
+	sleep_wkdy ~ "Sleep on weekdays",
+	sleep_wknd ~ "Sleep on weekends"
+)
+)
+
+#Exercise 4 #
 
 # add labels for the variables and for the "missing" category
 tbl_summary(
@@ -76,5 +94,3 @@ tbl_summary(
   modify_footnote(update = everything() ~ NA) |>
   # replace the column headers and make them bold
   modify_header(label = "**Variable**", p.value = "**P**")
-
-
