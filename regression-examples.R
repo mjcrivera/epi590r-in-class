@@ -19,6 +19,71 @@ nlsy <- read_csv(here::here("data", "raw", "nlsy.csv"),
     glasses_cat = factor(glasses, labels = c("No", "Yes"))
   )
 
+## Exercise 3: Each of the univariate regression examples held the outcome (y =) constant, while varying the predictor variables with include =. You can also look at one predictor across several outcomes. Create a univariate regression table looking at the association between sex (sex_cat) as the x = variable and each of nsibs, sleep_wkdy, and sleep_wknd, and income. ##
+
+tbl_uvregression(
+	nlsy,
+	x = sex_cat,
+	include = c(
+		nsibs, sleep_wkdy, sleep_wknd, income
+	),
+	method = lm
+)
+
+## Exercise 4 (Poisson Model) : Fit a Poisson regression (family = poisson()) for the number of siblings, using at least 3 predictors of your choice. Create a nice table displaying your Poisson regression and its exponentiated coefficients. ##
+
+poisson_model <- glm(nsibs ~ eyesight_cat + sex_cat + income,
+										 data = nlsy, family = poisson()
+)
+
+tbl_regression(
+	poisson_model,
+	exponentiate = TRUE,
+	label = list(
+		sex_cat ~ "Sex",
+		eyesight_cat ~ "Eyesight",
+		income ~ "Income"
+	)
+)
+
+## Exercise 5 (Logistic Model) : Instead of odds ratios for wearing glasses, as in the example in the slides., we want risk ratios. We can do this by specifying in the regression family = binomial(link = "log"). Regress glasses on eyesight_cat and sex_cat and create a table showing the risk ratios and confidence intervals from this regression. ##
+
+log_model <- glm(glasses ~ eyesight_cat + sex_cat,
+								 data = nlsy, family = binomial(link = "log")
+)
+
+tbl_regression(
+	log_model,
+	exponentiate = TRUE,
+	label = list(
+		sex_cat ~ "Sex",
+		eyesight_cat ~ "Eyesight"
+	)
+)
+
+## Exercise 6: Make a table comparing the logistic and the log-binomial results. ##
+
+logistic_table <- tbl_regression(
+	logistic_model,
+	exponentiate = TRUE,
+	label = list(
+		sex_cat ~ "Sex",
+		eyesight_cat ~ "Eyesight"
+	)
+)
+
+log_table <- tbl_regression(
+	log_model,
+	exponentiate = TRUE,
+	label = list(
+		sex_cat ~ "Sex",
+		eyesight_cat ~ "Eyesight"
+	)
+)
+
+tbl_merge(list(logistic_table, log_table),
+					tab_spanner = c("**Logistic regression**", "**Log-linear regression**")
+)
 
 # Univariate regression
 # this funciton is BOTH running the regressions and creating the table
@@ -55,7 +120,6 @@ tbl_uvregression(
   exponentiate = TRUE
 )
 
-
 ## Multivariable regressions
 # now we need to fit the models first
 
@@ -73,7 +137,6 @@ linear_model_int <- lm(income ~ sex_cat * age_bir + race_eth_cat,
 logistic_model <- glm(glasses ~ eyesight_cat + sex_cat,
   data = nlsy, family = binomial()
 )
-
 
 ## Tables
 # we use the models we just fit to create the tables
