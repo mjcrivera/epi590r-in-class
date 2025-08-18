@@ -47,7 +47,73 @@ label = list(
 )
 )
 
-## Exercise 4 ##
+## Exercise 4: Stratify the table by sex. Add a p-value comparing the sexes and an overall column combining both sexes. ##
+
+tbl_summary(
+	nlsy,
+	by = sex_cat,
+	include = c(
+		starts_with("sleep"),
+		race_eth_cat, region_cat, income
+	),
+	label = list(
+		race_eth_cat ~ "Race/ethnicity",
+		region_cat ~ "Region",
+		income ~ "Income",
+		sleep_wkdy ~ "Sleep on weekdays",
+		sleep_wknd ~ "Sleep on weekends"
+	)
+) |>
+
+	add_p(test = list(
+		all_continuous() ~ "t.test",
+		all_categorical() ~ "chisq.test"
+	)) |>
+add_overall()
+
+## Exercise 5: For the income variable, show the 10th and 90th percentiles of income with 3 digits, and for the sleep variables, show the min and the max with 1 digit. ##
+
+tbl_summary(
+	nlsy,
+	by = sex_cat,
+	include = c(
+		starts_with("sleep"),
+		race_eth_cat, region_cat, income
+	),
+	label = list(
+		race_eth_cat ~ "Race/ethnicity",
+		region_cat ~ "Region",
+		income ~ "Income",
+		sleep_wkdy ~ "Sleep on weekdays",
+		sleep_wknd ~ "Sleep on weekends"
+	),
+	statistic = list(starts_with("sleep") ~ "min = {min}; max = {max}",
+										income ~ "{p10} to {p90}"),
+digits = list(starts_with("sleep") ~ c(1, 1),
+							income ~ c(3, 3))
+)
+
+## Exercise 6: Add a footnote to the race/ethnicity variable with a link to the page describing how NLSY classified participants: https://www.nlsinfo.org/content/cohorts/nlsy79/topical-guide/household/race-ethnicity-immigration-data ##
+
+tbl_summary(
+	nlsy,
+	by = sex_cat,
+	include = c(
+		starts_with("sleep"),
+		race_eth_cat, region_cat, income
+	),
+	label = list(
+		race_eth_cat ~ "Race/ethnicity",
+		region_cat ~ "Region",
+		income ~ "Income",
+		sleep_wkdy ~ "Sleep on weekdays",
+		sleep_wknd ~ "Sleep on weekends"
+	)) |>
+	modify_table_styling(
+		columns = label,
+		rows = label == "Race/ethnicity",
+		footnote = "see https://www.nlsinfo.org/content/cohorts/nlsy79/topical-guide/household/race-ethnicity-immigration-data"
+	)
 
 ## Add labels for the variables and for the "missing" category ##
 
@@ -66,8 +132,10 @@ tbl_summary(
     age_bir ~ "Age at first birth"
   ),
   missing_text = "Missing"
-)
-
+add_p(test = list(
+	all_continuous() ~ "t.test",
+	all_categorical() ~ "chisq.test"
+)) |>
 ## Add p-values, a total column, bold labels, and remove the footnote ##
 tbl_summary(
   nlsy,
