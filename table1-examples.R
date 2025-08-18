@@ -2,7 +2,7 @@ install.packages("gtsummary", dependencies = TRUE)
 library(tidyverse)
 library(gtsummary)
 
-# Load and clean data
+## Load and clean data ##
 nlsy_cols <- c(
   "glasses", "eyesight", "sleep_wkdy", "sleep_wknd",
   "id", "nsibs", "samp", "race_eth", "sex", "region",
@@ -20,6 +20,8 @@ nlsy <- read_csv(here::here("data", "raw", "nlsy.csv"),
     glasses_cat = factor(glasses, labels = c("No", "Yes"))
   )
 
+## Simple table ##
+
 tbl_summary(
   nlsy,
   by = sex_cat,
@@ -28,9 +30,8 @@ tbl_summary(
     eyesight_cat, glasses, age_bir
   )
 )
-## Make a tbl_summary(). Include categorical region, race/ethnicity, income, and the sleep variables (use a helper function to select those) and make sure they are nicely labeled.
-# simple table. ##
-# Exercise 3 #
+##  Exercise 3: Make a tbl_summary(). Include categorical region, race/ethnicity, income, and the sleep variables (use a helper function to select those) and make sure they are nicely labeled.
+
 tbl_summary(
 	nlsy,
 	include = c(
@@ -46,9 +47,10 @@ label = list(
 )
 )
 
-#Exercise 4 #
+## Exercise 4 ##
 
-# add labels for the variables and for the "missing" category
+## Add labels for the variables and for the "missing" category ##
+
 tbl_summary(
   nlsy,
   by = sex_cat,
@@ -66,7 +68,7 @@ tbl_summary(
   missing_text = "Missing"
 )
 
-# add p-values, a total column, bold labels, and remove the footnote
+## Add p-values, a total column, bold labels, and remove the footnote ##
 tbl_summary(
   nlsy,
   by = sex_cat,
@@ -82,15 +84,15 @@ tbl_summary(
   ),
   missing_text = "Missing"
 ) |>
-  # change the test used to compare sex_cat groups
+## Change the test used to compare sex_cat groups ##
   add_p(test = list(
     all_continuous() ~ "t.test",
     all_categorical() ~ "chisq.test"
   )) |>
-  # add a total column with the number of observations
+## Add a total column with the number of observations ##
   add_overall(col_label = "**Total** N = {N}") |>
   bold_labels() |>
-  # remove the default footnotes
+## Remove the default footnotes ##
   modify_footnote(update = everything() ~ NA) |>
-  # replace the column headers and make them bold
+## Replace the column headers and make them bold ##
   modify_header(label = "**Variable**", p.value = "**P**")
