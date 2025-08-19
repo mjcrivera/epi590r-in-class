@@ -4,7 +4,8 @@ format:
   html:
     theme: quartz
 execute: 
-  echo: false
+  echo: true
+  eval: true
 ---
 
 ```{r}
@@ -22,12 +23,14 @@ nlsy <- read_csv(here::here("data", "raw", "nlsy.csv"),
          sex_cat = factor(sex, labels = c("Male", "Female")),
          race_eth_cat = factor(race_eth, labels = c("Hispanic", "Black", "Non-Black, Non-Hispanic")),
          eyesight_cat = factor(eyesight, labels = c("Excellent", "Very good", "Good", "Fair", "Poor")),
-         glasses_cat = factor(glasses, labels = c("No", "Yes"))) 
+         glasses_cat = factor(glasses, labels = c("No", "Yes")))
 ```
 
 # Customization of `tbl_summary()`
 
 ```{r}
+#| label: tbl-sex
+#| tbl-cap: "Descriptive Statistics Stratified by Sex"
 tbl_summary(
   nlsy,
   by = sex_cat,
@@ -36,8 +39,25 @@ tbl_summary(
 ```
 
 ```{r}
+#| label: tbl-eyesight
+#| tbl-cap: "Descriptive Statistics Stratified by Eyesight"
+tbl_summary(
+  nlsy,
+  by = eyesight_cat,
+  include = c(sex_cat, race_eth_cat, region_cat,
+              eyesight_cat, glasses, age_bir))
+
 ```
 
+The descriptive statistics are show stratified by sex (@tbl-sex) and by eyesight (@tbl-eyesight).
+
+```{r}
+mean_sleep_weekend <- mean(nlsy$sleep_wknd, na.rm = TRUE)
+
+mean_sleep_weekend
+```
+
+People slept an average of `r round mean_sleep_weekend` hours.
 
 ```{r}
 tbl_summary(
