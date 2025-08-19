@@ -1,6 +1,8 @@
 ---
 title: "gtsummary in quarto"
-format: html
+format:
+  html:
+    theme: quartz
 execute: 
   echo: false
 ---
@@ -32,6 +34,10 @@ tbl_summary(
   include = c(sex_cat, race_eth_cat, region_cat,
               eyesight_cat, glasses, age_bir))
 ```
+
+```{r}
+```
+
 
 ```{r}
 tbl_summary(
